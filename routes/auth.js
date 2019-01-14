@@ -20,7 +20,7 @@ router.post('/login', localAuth, function(req, res) {
 // we pass in localAuth as a middleware fn that will check if the user can log in or not (i did this in server.js)- if they cant, then the middlware handles it and it never gets to the endpoint. Otherwise, they're granted access to the login endpoint, and the middleware gives us a req.user so we can now acccess that and know who's logged in - and assign a token for that user!
 
 //this creates a new token
-router.post('/refresh', (req, res) => {
+router.post('/refresh', jwtAuth, (req, res) => {
   const authToken = createAuthToken(req.user)
   res.json({ authToken })
 })
