@@ -1,15 +1,19 @@
 const express = require('express')
 const Router = express.Router()
 const Listing = require('../models/listingModel')
+const passport = require('passport')
+
+const jwtAuth = passport.authenticate('jwt', { session: false })
 
 //post new listing
-Router.post('/', function(req, res, next) {
+Router.post('/', jwtAuth, function(req, res, next) {
   let { title, description, price, location } = req.body
   const newListing = {
     title: title,
     description: description,
     price: price,
-    location: location
+    location: location,
+    user: req.user._id
   }
   return Listing.create(newListing).then(result => {
     return res.json(result).status(201)
@@ -17,7 +21,7 @@ Router.post('/', function(req, res, next) {
 })
 
 //remove listing
-Router.delete(':id', (req, res, next) => {
+Router.delete('/:id', jwtAuth, (req, res, next) => {
   const { id } = req.params
 
   return Listing.findOneAndRemove({ _id: id })
@@ -25,14 +29,26 @@ Router.delete(':id', (req, res, next) => {
     .catch(err => next(err))
 })
 //get All listings
-Router.get('/', (req, res, next) => {
-  return Listing.find({})
+
+Router.get('/', jwtAuth, (req, res, next) => {
+  const { searchTerm } = req.query
+  const userId = req.user.id
+  let filter = {}
+
+  if (searchTerm) {
+    const re = new RegExp(searchTerm, 'i')
+    filter.$or = [{ title: re }, { description: re }, { location: re }]
+  }
+  console.log(searchTerm)
+  filter.userId = userId
+
+  return Listing.find(filter)
     .then(data => res.json(data))
     .catch(err => next(err))
 })
 
 //get listing by ID
-Router.get('/:id', (req, res, next) => {
+Router.get('/:id', jwtAuth, (req, res, next) => {
   const { id } = req.params
   // const goodId = checkIdIsValid(id);
   // // if(!goodId){
@@ -46,7 +62,7 @@ Router.get('/:id', (req, res, next) => {
 })
 
 //update listing
-Router.put('/:id', (req, res, next) => {
+Router.put('/:id', jwtAuth, (req, res, next) => {
   const { id } = req.params
   // const goodId = checkIdIsValid(id);
   // if(!goodId){

@@ -1,6 +1,9 @@
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
+const passport = require('passport')
+const jwtStrategy = require('./passport/jwt')
+const localStrategy = require('./passport/local')
 
 const userLoginRoute = require('./routes/user')
 const listingRoute = require('./routes/listingRoute')
@@ -11,6 +14,9 @@ const { dbConnect } = require('./db-mongoose')
 // const {dbConnect} = require('./db-knex');
 
 const app = express()
+
+passport.use(localStrategy)
+passport.use(jwtStrategy)
 
 app.use(
   morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
