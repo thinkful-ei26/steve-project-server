@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "Template for an Express backend",
   "main": "server.js",
+  "engines": { "node": "10.3.0" },
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
     "mocha": "mocha --exit --file test/setup.test.js '!(node_modules)/**/*test.js'",
     "mocha-exit0": "mocha --exit --file test/setup.test.js '!(node_modules)/**/*test.js' || true",
     "test": "nodemon --exec npm run mocha-exit0",
     "cover": "nodemon --exec nyc --reporter=lcov --reporter=text-summary npm run mocha-exit0",
-    "heroku": "node index.js",
+    "heroku": "node server.js",
     "travis": "npm run mocha"
   },
   "author": "Joe Turner <jturner@thinkful.com>",
