@@ -13,8 +13,9 @@ Router.post('/', jwtAuth, function(req, res, next) {
     description: description,
     price: price,
     location: location,
-    user: req.user._id
+    user: req.user.id
   }
+  console.log(req.user)
   return Listing.create(newListing).then(result => {
     return res.json(result).status(201)
   })
