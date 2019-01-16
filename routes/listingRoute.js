@@ -41,7 +41,7 @@ Router.get('/', jwtAuth, (req, res, next) => {
     filter.$or = [{ title: re }, { description: re }, { location: re }]
   }
   console.log(searchTerm)
-  filter.userId = userId
+  filter.user = userId
 
   return Listing.find(filter)
     .then(data => res.json(data))
